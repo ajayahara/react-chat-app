@@ -5,6 +5,48 @@
   box-sizing: border-box;
 }
 body{
+  color: white;
   font-family: 'Nunito Sans', sans-serif;
   background-color: rgb(40, 40, 60);
+}
+.chat-box{
+  border: 2px solid gainsboro;
+  border-radius: 10px;
+}
+.chat-box img{
+  border-radius: 50%;
+}
+.name{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.notification{
+  background-color: rgb(88, 139, 163);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.date{
+  font-size: 12px;
+}
+.online-status{
+  width: 10px;
+  height: 10px;
+  background-color: green;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.04),
+              0 0 0 3px rgba(255,255,255,.04),
+              0 0 0 4px rgba(255,255,255,.04)
+}
+::-webkit-scrollbar {
+  display: none;
+}
+.singleUser{
+ background: greenyellow;
+ padding: 5px;
+ border-radius: 5px; 
+ cursor: pointer;
 }
