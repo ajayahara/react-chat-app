@@ -41,12 +41,70 @@ body{
               0 0 0 3px rgba(255,255,255,.04),
               0 0 0 4px rgba(255,255,255,.04)
 }
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 .singleUser{
  background: greenyellow;
  padding: 5px;
  border-radius: 5px; 
  cursor: pointer;
+}
+
+.chat-container{
+  width: 100%;
+  height: 75vh;
+}
+.message-div{
+  overflow-y: scroll;
+}
+.message-div{
+  padding: 5px;
+  height: 60vh;
+}
+.message-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-div {
+  flex: 1; /* Allow the message div to take up remaining vertical space */
+  display: flex;
+  flex-direction: column; /* Stack messages vertically */
+  overflow-y: auto; /* Add a scrollbar if messages overflow */
+}
+
+.single-message {
+  padding: 8px;
+  border-radius: 8px;
+  margin: 4px;
+}
+.single-message>span{
+  font-size: 11px;
+  display: block;
+  text-align: end;
+}
+.left-float {
+  background-color: #546b42;
+  align-self: flex-start;
+}
+
+.right-float {
+  background-color: #5c3f3f;
+  align-self: flex-end;
+}
+
+.message-name{
+  text-transform: capitalize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(40, 40, 60);
+  position: relative;
+  color: chartreuse;
+}
+.message-send{
+  position: relative;
+  bottom:0%;
 }

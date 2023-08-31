@@ -6,6 +6,12 @@ export const ChatContextProvider = ({ children, user }) => {
     const [userChatsLoading, setUserChatLoading] = useState(false);
     const [userChatError, setUserChatError] = useState(null);
     const [notChated, setNotChated] = useState([]);
+    const [chat, setChat] = useState(null);
+    const [messages, setMessages] = useState(null);
+    const [messagesLoading, setMessagesLoading] = useState(false);
+    const [messagesError, setMessagesError] = useState(null);
+
+
     useEffect(() => {
         const getUser = async () => {
             const response = await getReq(`${baseUrl}/user`);
@@ -26,7 +32,7 @@ export const ChatContextProvider = ({ children, user }) => {
             setNotChated(xchat);
         }
         getUser()
-    }, [userChats, user])
+    }, [userChats, user]);
     useEffect(() => {
         const getUserChats = async () => {
             setUserChatLoading(true);
@@ -43,14 +49,34 @@ export const ChatContextProvider = ({ children, user }) => {
             getUserChats();
         }
     }, [user?._id])
-    const createChat=async (secondId)=>{
-        const response=await postReq(`${baseUrl}/chat`,{firstId:user._id,secondId});
-        if(response.error){
+    useEffect(() => {
+        const getChatMessages = async () => {
+            setMessagesLoading(true);
+            setMessagesError(null);
+            const response = await getReq(`${baseUrl}/message/${chat?._id}`);
+            if (response.error) {
+                setMessagesError(response.messages);
+            } else {
+                setMessages(response);
+            }
+            setMessagesLoading(false);
+        }
+        getChatMessages();
+    }, [chat])
+    const createChat = async (secondId) => {
+        const response = await postReq(`${baseUrl}/chat`, { firstId: user._id, secondId });
+        if (response.error) {
             console.log(response.error);
         }
-        setUserChats([...userChats,response]);
+        setUserChats([...userChats, response]);
     }
-    return <ChatContext.Provider value={{ userChats, userChatsLoading, userChatError, notChated,createChat}}>
+    const updateChat = (data) => {
+        setChat(data);
+    }
+    const updateMessage=(data)=>{
+        setMessages(data)
+    }
+    return <ChatContext.Provider value={{ messages, messagesError, messagesLoading, userChats, userChatsLoading, userChatError, notChated, createChat, updateChat, chat,updateMessage }}>
         {children}
     </ChatContext.Provider>
 }
