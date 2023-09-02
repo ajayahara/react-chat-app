@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 body{
-  color: white;
+  color: rgb(255, 255, 255);
   font-family: 'Nunito Sans', sans-serif;
   background-color: rgb(40, 40, 60);
 }
@@ -35,15 +35,14 @@ body{
 .online-status{
   width: 10px;
   height: 10px;
-  background-color: green;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(255,255,255,.04),
-              0 0 0 3px rgba(255,255,255,.04),
-              0 0 0 4px rgba(255,255,255,.04)
 }
-/* ::-webkit-scrollbar {
-  display: none;
-} */
+.green-light{
+  background-color: rgb(43, 255, 0);
+}
+.red-light{
+  background-color: rgb(206, 7, 7);
+}
 .singleUser{
  background: greenyellow;
  padding: 5px;
@@ -71,9 +70,11 @@ body{
   flex: 1; /* Allow the message div to take up remaining vertical space */
   display: flex;
   flex-direction: column; /* Stack messages vertically */
-  overflow-y: auto; /* Add a scrollbar if messages overflow */
+  overflow-y:scroll; /* Add a scrollbar if messages overflow */
 }
-
+.message-div::-webkit-scrollbar {
+  display: none;
+} 
 .single-message {
   padding: 8px;
   border-radius: 8px;
@@ -107,4 +108,8 @@ body{
 .message-send{
   position: relative;
   bottom:0%;
+}
+.no-message{
+  text-align: center;
+  font-size: 22px;
 }

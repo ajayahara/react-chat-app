@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { baseUrl, getReq, postReq } from "../utility/untility";
+import { io } from "socket.io-client"
 export const ChatContext = createContext();
 export const ChatContextProvider = ({ children, user }) => {
     const [userChats, setUserChats] = useState(null);
@@ -10,7 +11,44 @@ export const ChatContextProvider = ({ children, user }) => {
     const [messages, setMessages] = useState(null);
     const [messagesLoading, setMessagesLoading] = useState(false);
     const [messagesError, setMessagesError] = useState(null);
-
+    const [socket, setSocket] = useState(null);
+    const [onlineUser, setOnlineUser] = useState([]);
+    const [text,setText]=useState("");
+    const [newMessage,setNewMessage]=useState(null);
+    
+    useEffect(() => {
+        const newSocket = io("http://localhost:3000/");
+        setSocket(newSocket);
+        return () => {
+            newSocket.disconnect()
+        }
+    }, [user])
+    useEffect(() => {
+        if (socket == null) return;
+        socket.emit("addNewUser", user?._id);
+        socket.on("getOnlineUser", (users) =>{
+            setOnlineUser([...users])
+        })
+        return () => {
+            socket.off("getOnlineUser")
+        }
+    }, [socket, user])
+    useEffect(() => {
+        if (socket == null||newMessage==null) return;
+        socket.emit("sendMessage",{...newMessage,recipientId:chat?._id});
+        setNewMessage(null);
+        return () => {
+            socket.off("sendMessage")
+        }
+    }, [newMessage,socket,chat])
+    useEffect(()=>{
+        if(socket==null) return;
+        socket.on("getMessage",(message)=>{
+            if(chat?._id==message.recipientId){
+                setMessages([...messages,message])
+            }
+        })
+    },[socket,chat,messages])
 
     useEffect(() => {
         const getUser = async () => {
@@ -73,10 +111,20 @@ export const ChatContextProvider = ({ children, user }) => {
     const updateChat = (data) => {
         setChat(data);
     }
-    const updateMessage=(data)=>{
-        setMessages(data)
+    const handleSubmit=async ()=>{
+        if(text=="") return;
+        const message={chatId:chat?._id,text:text,senderId:user?._id}
+        const res=await postReq(`${baseUrl}/message`,message);
+        if(!res.error){
+            setMessages([...messages,res])
+            setNewMessage(res)
+        }
+        setText("");
     }
-    return <ChatContext.Provider value={{ messages, messagesError, messagesLoading, userChats, userChatsLoading, userChatError, notChated, createChat, updateChat, chat,updateMessage }}>
+    const updateText=(data)=>{
+        setText(data)
+    }
+    return <ChatContext.Provider value={{ messages, messagesError, messagesLoading, userChats, userChatsLoading, userChatError, notChated, createChat, updateChat, chat, onlineUser,text,updateText,handleSubmit }}>
         {children}
     </ChatContext.Provider>
 }
