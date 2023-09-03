@@ -25,7 +25,7 @@ export const UserChat = ({ user, chat }) => {
                 <div className="date">
                     12/12/20
                 </div>
-                <div className="notification">
+                <div className="">
                     2
                 </div>
             </div>
