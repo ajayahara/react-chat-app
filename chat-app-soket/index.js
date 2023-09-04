@@ -5,7 +5,8 @@ io.on("connection", (socket) => {
     socket.on("addNewUser", (userId) => {
         if (!onlineUser.some((user) => user.userId == userId)) {
             onlineUser.push({
-                userId, socketId: socket.id
+                userId:userId,
+                socketId: socket.id
             })
         }
         io.emit("getOnlineUser", onlineUser)

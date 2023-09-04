@@ -1,10 +1,14 @@
 import { Stack } from "react-bootstrap";
 import { useRecipient } from "../../hook/useRecipient"
 import { ChatContext } from "../../context/ChatContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 export const UserChat = ({ user, chat }) => {
     const [recipient] = useRecipient(chat, user);
-    const {onlineUser}=useContext(ChatContext)
+    const {onlineUser,unSeenMessage}=useContext(ChatContext);
+    const [count,setCount]=useState(0);
+    useEffect(()=>{
+        setCount(unSeenMessage?.filter((message)=>message.chatId==chat?._id).length)
+    },[unSeenMessage,chat])
     return (
         <Stack direction="horizontal" gap={3} className="chat-box justify-content-between align-items-center p-2">
             <div className="d-flex">
@@ -16,7 +20,7 @@ export const UserChat = ({ user, chat }) => {
                         {recipient?.name}
                     </div>
                     <div className="text">
-                        text message
+                        new message
                     </div>
                 </div>
             </div>
@@ -25,9 +29,11 @@ export const UserChat = ({ user, chat }) => {
                 <div className="date">
                     12/12/20
                 </div>
-                <div className="">
-                    2
-                </div>
+                {
+                    (!count?null:<div className="notification">
+                        {count}
+                    </div>)
+                }
             </div>
         </Stack>
     )

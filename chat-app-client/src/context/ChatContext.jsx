@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { baseUrl, getReq, postReq } from "../utility/untility";
 import { io } from "socket.io-client"
 export const ChatContext = createContext();
@@ -8,13 +8,15 @@ export const ChatContextProvider = ({ children, user }) => {
     const [userChatError, setUserChatError] = useState(null);
     const [notChated, setNotChated] = useState([]);
     const [chat, setChat] = useState(null);
-    const [messages, setMessages] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [messagesLoading, setMessagesLoading] = useState(false);
     const [messagesError, setMessagesError] = useState(null);
     const [socket, setSocket] = useState(null);
     const [onlineUser, setOnlineUser] = useState([]);
     const [text, setText] = useState("");
     const [newMessage, setNewMessage] = useState(null);
+    const [unSeenMessage, setUnSeenMessage] = useState([]);
+    const audioRef = useRef(new Audio("/audio.mp3"))
     useEffect(() => {
         const newSocket = io("http://localhost:3000");
         setSocket(newSocket);
@@ -22,6 +24,22 @@ export const ChatContextProvider = ({ children, user }) => {
             newSocket.disconnect()
         }
     }, [user])
+    // getting chat messages
+    const getChatMessages = useCallback(async () => {
+        setMessagesLoading(true);
+        setMessagesError(null);
+        const response = await getReq(`${baseUrl}/message/${chat?._id}`);
+        if (response.error) {
+            setMessagesError(response.messages);
+        } else {
+            setMessages(response);
+        }
+        setMessagesLoading(false);
+    }, [chat])
+    useEffect(() => {
+        if (!chat) return;
+        getChatMessages();
+    }, [chat, getChatMessages])
     useEffect(() => {
         if (socket == null) return;
         socket.emit("addNewUser", user?._id);
@@ -43,15 +61,19 @@ export const ChatContextProvider = ({ children, user }) => {
     }, [newMessage, socket, chat, user])
     useEffect(() => {
         if (socket == null) return;
-        socket.on("getMessage",async (message) => {
-            if (chat?._id == message.chatId) {
+        socket.on("getMessage", async (message) => {
+            if (chat?._id === message.chatId) {
                 setMessages([...messages, message])
+            } else {
+                setUnSeenMessage([...unSeenMessage, message]);
             }
-            const audio = new Audio("/audio.mp3");
-            audio.volume=0.2
-            await audio.play()
-        })
-    }, [socket, chat, messages, user])
+            audioRef.current.volume = 0.2;
+            audioRef.current.play();
+        });
+        return ()=>{
+            socket.off("getMessage")
+        }
+    }, [socket, chat, messages, user, unSeenMessage])
 
     useEffect(() => {
         const getUser = async () => {
@@ -90,20 +112,6 @@ export const ChatContextProvider = ({ children, user }) => {
             getUserChats();
         }
     }, [user?._id])
-    useEffect(() => {
-        const getChatMessages = async () => {
-            setMessagesLoading(true);
-            setMessagesError(null);
-            const response = await getReq(`${baseUrl}/message/${chat?._id}`);
-            if (response.error) {
-                setMessagesError(response.messages);
-            } else {
-                setMessages(response);
-            }
-            setMessagesLoading(false);
-        }
-        getChatMessages();
-    }, [chat])
     const createChat = async (secondId) => {
         const response = await postReq(`${baseUrl}/chat`, { firstId: user._id, secondId });
         if (response.error) {
@@ -112,7 +120,9 @@ export const ChatContextProvider = ({ children, user }) => {
         setUserChats([...userChats, response]);
     }
     const updateChat = (data) => {
-        setChat(data);
+        setMessages([])
+        setChat({ ...data });
+        setUnSeenMessage([...unSeenMessage.filter((message)=>message.chatId!==data?._id)])
     }
     const handleSubmit = async () => {
         if (text == "") return;
@@ -127,7 +137,7 @@ export const ChatContextProvider = ({ children, user }) => {
     const updateText = (data) => {
         setText(data)
     }
-    return <ChatContext.Provider value={{ messages, messagesError, messagesLoading, userChats, userChatsLoading, userChatError, notChated, createChat, updateChat, chat, onlineUser, text, updateText, handleSubmit }}>
+    return <ChatContext.Provider value={{ messages, messagesError, messagesLoading, userChats, userChatsLoading, userChatError, notChated, createChat, updateChat, chat, onlineUser, text, updateText, handleSubmit, unSeenMessage }}>
         {children}
     </ChatContext.Provider>
 }
