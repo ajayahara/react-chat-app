@@ -67,8 +67,12 @@ export const ChatContextProvider = ({ children, user }) => {
             } else {
                 setUnSeenMessage([...unSeenMessage, message]);
             }
+           try {
             audioRef.current.volume = 0.2;
-            audioRef.current.play();
+            await audioRef.current.play();
+           } catch (err) {
+            console.log(err)
+           }
         });
         return ()=>{
             socket.off("getMessage")
