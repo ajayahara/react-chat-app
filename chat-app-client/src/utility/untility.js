@@ -1,4 +1,4 @@
-export const baseUrl="http://localhost:5050";
+export const baseUrl="https://chat-backend-8qk1.onrender.com";
 
 export const postReq=async (url,body)=>{
     const res=await fetch(url,{

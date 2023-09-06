@@ -19,15 +19,28 @@ The React Chat App is a modern, real-time messaging application built using Reac
 7. User-Friendly Interface: The app features an intuitive and user-friendly interface, making it easy for users to navigate and engage in conversations.
 
 ## Technologies Used:
-<ul>
-  <li>React.js: For building the frontend user interface.</li>
-  <li>Node.js: For the server-side application logic.</li>
-  <li>Socket.IO: For enabling real-time messaging and notifications.</li>
-  <li>Socket.IO: For enabling real-time messaging and notifications.</li>
-  <li>Socket.IO: For enabling real-time messaging and notifications.</li>
-  <li>Bootstrap: For responsive and attractive UI components.</li>
-  <li>MongoDB: For storing user data and chat history.</li>
-</ul>
+
+  - React.js: For building the frontend user interface.
+  - Node.js: For the server-side application logic.
+  - Socket.IO: For enabling real-time messaging and notifications.
+  - Bootstrap: For responsive and attractive UI components.
+  - MongoDB: For storing user data and chat history.
 
 ## Purpose:
 The React Chat App project aims to provide a simple, efficient, and enjoyable way for users to communicate with friends and stay connected in real-time. Whether for personal or professional use, the app offers a convenient and feature-rich chat platform.
+
+
+## Usage/Examples
+
+- When u click on the deployed url it will take u to login page of the chat app.
+- Here you have to provide email and password to login.
+- If you don't have credentials for login then don't worry.Go to register page by clicking "register button" from navbar and provide email, password, username.
+- In both of the cases click on submit/login button.
+```
+It will show error message if you
+- don't provide a weak password while registering.
+- provide correct email address.
+- keep username upto 5 letters
+- provide correct password while logging in.
+```
+

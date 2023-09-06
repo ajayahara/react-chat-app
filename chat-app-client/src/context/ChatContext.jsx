@@ -18,7 +18,7 @@ export const ChatContextProvider = ({ children, user }) => {
     const [unSeenMessage, setUnSeenMessage] = useState([]);
     const audioRef = useRef(new Audio("/audio.mp3"))
     useEffect(() => {
-        const newSocket = io("http://localhost:3000");
+        const newSocket = io("https://chat-socket-cmo8.onrender.com");
         setSocket(newSocket);
         return () => {
             newSocket.disconnect()
